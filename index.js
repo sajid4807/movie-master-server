@@ -34,6 +34,23 @@ async function run() {
         const result = await cursor.toArray()
         res.send(result)
     })
+    app.get('/movies/:id', async(req,res) => {
+        const id = req.params.id;
+        const query ={_id: new ObjectId(id)}
+        const result = await moviesCollection.findOne(query)
+        res.send(result)
+    })
+    
+    app.patch('/movies/:id',async(req,res) => {
+        const id = req.params.id;
+        const updateMovies = req.body;
+        const query = {_id: new ObjectId(id)}
+        const update = {
+            $set: updateMovies
+        }
+        const result = await moviesCollection.updateOne(query,update)
+        res.send(result)
+    })
 
     app.post('/movies',async(req,res) => {
         const newMovies = req.body;
