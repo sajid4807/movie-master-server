@@ -49,7 +49,7 @@ async function run() {
     })
 
     app.get('/movies',async(req,res) => {
-        const cursor = moviesCollection.find().sort({releaseYear: -1}).limit(5)
+        const cursor = moviesCollection.find().sort({releaseYear: -1}).limit(6)
         const result = await cursor.toArray()
         res.send(result)
     })
@@ -59,14 +59,36 @@ async function run() {
         const result = await cursor.toArray()
         res.send(result)
     })
-    app.get('/movies/:id', async(req,res) => {
+    // app.get('/products', async (req, res) => {
+    //         // const projectFields = { title: 1, price_min: 1, price_max: 1, image: 1 }
+    //         // const cursor = productsCollection.find().sort({ price_min: -1 }).skip(2).limit(2).project(projectFields);
+
+    //         console.log(req.query)
+    //         const email = req.query.email;
+    //         const query = {}
+    //         if (email) {
+    //             query.email = email;
+    //         }
+
+    //         const cursor = productsCollection.find(query);
+    //         const result = await cursor.toArray();
+    //         res.send(result)
+    //     });
+    app.get('/allMovies/:id', async(req,res) => {
         const id = req.params.id;
-        const query ={_id: new ObjectId(id)}
+        // const query ={_id: id}
+        const query = { _id: new ObjectId(id) }
         const result = await moviesCollection.findOne(query)
         res.send(result)
     })
+    //  app.get('/products/:id', async (req, res) => {
+    //         const id = req.params.id;
+    //         const query = { _id: id }
+    //         const result = await productsCollection.findOne(query);
+    //         res.send(result);
+    //     })
     // my-collection apis
-    app.get('/movies/my-collection',async(req,res) => {
+    app.get('/allMovies/my-collection',async(req,res) => {
       const email = req.query.email
       const query ={}
       if(email){
@@ -77,24 +99,30 @@ async function run() {
       res.send(result)
     })
     
-    app.patch('/movies/:id',async(req,res) => {
+    app.patch('/allMovies/:id',async(req,res) => {
         const id = req.params.id;
         const updateMovies = req.body;
         const query = {_id: new ObjectId(id)}
         const update = {
-            $set: updateMovies
+            $set: updateMovies,
+            $currentDate: { updatedAt: true }
         }
         const result = await moviesCollection.updateOne(query,update)
         res.send(result)
     })
+    // app.put('/allMovies/:id', async(req,res) => {
+    //   const id = req.params.id
+    //   const query ={_id: new ObjectId(id)}
+    //   const result = await moviesCollection.updateOne(query)
+    // })
 
-    app.post('/movies/add',async(req,res) => {
+    app.post('/allMovies/add',async(req,res) => {
         const newMovies = req.body;
         const result = await moviesCollection.insertOne(newMovies)
         res.send(result)
     })
 
-    app.delete('/movies/:id', async(req,res)=> {
+    app.delete('/allMovies/:id', async(req,res)=> {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         const result = await moviesCollection.deleteOne(query)
